@@ -1,15 +1,13 @@
 package com.fraddy.goldenbanana.domain.base;
 
 
-import com.rcs.enums.RestApiResponseStatus;
+
+import com.fraddy.goldenbanana.enums.RestApiResponseStatus;
 
 import java.util.Collections;
 import java.util.List;
 
 
-/**
- * @author Nuwan
- */
 public class ValidationFailureResponseWrapper extends BaseResponseWrapper {
 
     private List<ValidationFailure> ValidationFailures;

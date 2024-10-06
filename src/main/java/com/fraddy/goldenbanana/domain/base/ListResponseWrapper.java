@@ -3,13 +3,11 @@ package com.fraddy.goldenbanana.domain.base;
 
 
 
-import com.rcs.enums.RestApiResponseStatus;
+
+import com.fraddy.goldenbanana.enums.RestApiResponseStatus;
 
 import java.util.List;
 
-/**
- * @author Nuwan
- */
 public class ListResponseWrapper<T> extends BaseResponseWrapper {
 
     private List<T> content;

@@ -1,7 +1,7 @@
 package com.fraddy.goldenbanana.domain.base;
 
 
-import com.rcs.enums.RestApiResponseStatus;
+import com.fraddy.goldenbanana.enums.RestApiResponseStatus;
 
 public class BaseResponseWrapper {
 
