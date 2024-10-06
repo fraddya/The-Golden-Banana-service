@@ -29,7 +29,6 @@ public class User extends CreateModifyAwareBaseEntity {
     private String contactNo;
     private LocalDate dateJoin;
     private GenderType genderType;
-    private String nationality;
     private String image;
     private String email;
     private LocalDateTime userLogging;
