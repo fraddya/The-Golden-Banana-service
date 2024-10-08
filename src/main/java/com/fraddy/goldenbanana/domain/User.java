@@ -11,7 +11,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,4 +35,7 @@ public class User extends CreateModifyAwareBaseEntity {
     private String passWord;
     private UserType role;
     private Status status;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<UserLevelProgress> progress;
 }
