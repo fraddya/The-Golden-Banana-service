@@ -114,6 +114,5 @@ public class UserLevelProgressServiceImpl implements UserLevelProgressService {
             throw new ComplexValidationException("user level progress retrieval","User level progress (%s) not found  ");
         }
     }
-    
 
 }
