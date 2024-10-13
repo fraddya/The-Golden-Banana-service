@@ -2,25 +2,15 @@ package com.fraddy.goldenbanana.controller;
 
 
 import com.fraddy.goldenbanana.domain.Level;
-import com.fraddy.goldenbanana.domain.User;
-import com.fraddy.goldenbanana.domain.base.PagingListResponseWrapper;
+import com.fraddy.goldenbanana.domain.base.ListResponseWrapper;
 import com.fraddy.goldenbanana.domain.base.SingleItemResponseWrapper;
-import com.fraddy.goldenbanana.domain.criteria.UserCriteria;
 import com.fraddy.goldenbanana.dto.request.level.LevelCreateRequest;
-import com.fraddy.goldenbanana.dto.request.user.UserCreateRequest;
-import com.fraddy.goldenbanana.dto.request.user.UserSearchRequest;
-import com.fraddy.goldenbanana.dto.request.user.UserUpdateRequest;
 import com.fraddy.goldenbanana.dto.response.level.LevelSearchResponse;
-import com.fraddy.goldenbanana.dto.response.user.UserCreateResponse;
-import com.fraddy.goldenbanana.dto.response.user.UserSearchResponse;
 import com.fraddy.goldenbanana.mapper.LevelMapper;
-import com.fraddy.goldenbanana.mapper.UserMapper;
 import com.fraddy.goldenbanana.service.LevelService;
-import com.fraddy.goldenbanana.service.UserService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -108,6 +98,16 @@ public class LevelController {
             response = levelMapper.mapToViewResponse(level);
         }
         return new ResponseEntity<>(new SingleItemResponseWrapper<>(response), HttpStatus.OK);
+    }
+
+    @GetMapping("${app.endpoint.levelSuggestion}")
+    public ResponseEntity<ListResponseWrapper<LevelSearchResponse>> suggestion() {
+
+        List<Level> results = levelService.search();
+
+        List<LevelSearchResponse> responses = levelMapper.mapToSuggestionResponse(results);
+
+        return new ResponseEntity<>(new ListResponseWrapper<>(responses), HttpStatus.OK);
     }
 
 }

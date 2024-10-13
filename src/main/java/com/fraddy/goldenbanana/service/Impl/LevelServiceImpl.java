@@ -2,29 +2,15 @@ package com.fraddy.goldenbanana.service.Impl;
 
 
 import com.fraddy.goldenbanana.domain.Level;
-import com.fraddy.goldenbanana.domain.QUser;
-import com.fraddy.goldenbanana.domain.User;
 import com.fraddy.goldenbanana.domain.base.ComplexValidationException;
-import com.fraddy.goldenbanana.domain.criteria.UserCriteria;
 import com.fraddy.goldenbanana.enums.Status;
-import com.fraddy.goldenbanana.enums.UserType;
 import com.fraddy.goldenbanana.repository.LevelRepository;
-import com.fraddy.goldenbanana.repository.UserRepository;
 import com.fraddy.goldenbanana.service.LevelService;
-import com.fraddy.goldenbanana.service.UserService;
-import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +36,7 @@ public class LevelServiceImpl implements LevelService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Level> search(Level level) {
+    public List<Level> search() {
 
         List<Level> levelPersisted = levelRepository.findAll();
         if (levelPersisted == null) {

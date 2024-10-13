@@ -33,6 +33,8 @@ public class UserLevelProgressController {
     @Autowired
     private UserLevelProgressMapper mapper;
 
+    Long storedSolution = null;
+
     @PostMapping("${app.endpoint.userLevelProgresCreate}")
     public ResponseEntity<SingleItemResponseWrapper<UserLevelProgressViewResponse>> create(
             @Validated @RequestBody UserLevelProgressCreateRequest request) {
@@ -105,4 +107,34 @@ public class UserLevelProgressController {
         return new ResponseEntity<>(new SingleItemResponseWrapper<>(response), HttpStatus.OK);
     }
 
+    //ToDo : requesting queastion
+    /*@GetMapping("${app.endpoint.requestQuestion}")
+    public ResponseEntity<SingleItemResponseWrapper<QuestionResponse>> requestQuestion() {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://marcconrad.com/uob/banana/api.php?out=json";
+
+        // Manually handle the response as String and convert it if necessary
+        //ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        QuestionResponse questionResponse = new QuestionResponse();
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            String body = responseEntity.getBody();
+            // Log response for debugging
+            log.info("Response from API: {}", body);
+            try {
+                // Assuming the response is actually JSON despite the content-type header
+                ObjectMapper mapper = new ObjectMapper();
+                QuestionResponse questionResponse = mapper.readValue(body, QuestionResponse.class);
+
+                storedSolution = questionResponse.getSolution();
+
+                return new ResponseEntity<>(new SingleItemResponseWrapper<>(questionResponse), HttpStatus.OK);
+            } catch (JsonProcessingException e) {
+                // Handle the case where the response is not valid JSON
+                log.error("Failed to parse the response", e);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }*/
 }
