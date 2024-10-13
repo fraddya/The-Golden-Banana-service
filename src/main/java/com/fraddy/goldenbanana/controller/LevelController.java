@@ -31,7 +31,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@Schema(name = "EmployeeController", description = "create/search/view/update/delete")
+@Schema(name = "LevelController", description = "create/search/view/update/delete")
 public class LevelController {
 
     @Autowired
