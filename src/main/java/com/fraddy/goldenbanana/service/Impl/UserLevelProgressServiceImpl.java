@@ -110,7 +110,7 @@ public class UserLevelProgressServiceImpl implements UserLevelProgressService {
         if (userLevelProgress != null) {
             userLevelProgress.setStatus(Status.DELETED);
             return userLevelProgressRepository.save(userLevelProgress);
-        }else {
+        } else {
             throw new ComplexValidationException("user level progress retrieval","User level progress (%s) not found  ");
         }
     }

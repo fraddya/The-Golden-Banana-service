@@ -40,7 +40,7 @@ public class LevelController {
     @Autowired
     private LevelMapper levelMapper;
 
-    @PostMapping("${app.endpoint.userCreate}")
+    @PostMapping("${app.endpoint.levelCreate}")
     public ResponseEntity<SingleItemResponseWrapper<LevelSearchResponse>> create(
             @Validated @RequestBody LevelCreateRequest request) {
 
@@ -53,7 +53,7 @@ public class LevelController {
         return new ResponseEntity<>(new SingleItemResponseWrapper<>(response), HttpStatus.CREATED);
     }
 
-    @PutMapping("${app.endpoint.userUpdate}")
+    @PutMapping("${app.endpoint.levelUpdate}")
     public ResponseEntity<SingleItemResponseWrapper<LevelSearchResponse>> update(
             @PathVariable Long id, @Validated @RequestBody LevelCreateRequest request) {
         log.info("update Request: {}", request);
@@ -86,7 +86,7 @@ public class LevelController {
         return new ResponseEntity<>(new PagingListResponseWrapper<>(responses, pagination), HttpStatus.OK);
     }*/
 
-    @GetMapping("${app.endpoint.userView}")
+    @GetMapping("${app.endpoint.levelView}")
     public ResponseEntity<SingleItemResponseWrapper<LevelSearchResponse>> retrieve(
             @PathVariable Long id) {
         Level level = levelService.retrieve(id);
@@ -96,7 +96,7 @@ public class LevelController {
         return new ResponseEntity<>(new SingleItemResponseWrapper<>(response), HttpStatus.OK);
     }
 
-    @DeleteMapping("${app.endpoint.userDelete}")
+    @DeleteMapping("${app.endpoint.levelDelete}")
     public ResponseEntity<SingleItemResponseWrapper<LevelSearchResponse>> delete(
             @PathVariable Long id) {
 
