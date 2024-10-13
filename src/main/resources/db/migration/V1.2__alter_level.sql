@@ -1,0 +1,1 @@
+ALTER TABLE `level` ADD COLUMN `difficulty` varchar(255)
