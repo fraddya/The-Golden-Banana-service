@@ -1,0 +1,15 @@
+create table user_level_progress
+(id bigint not null auto_increment,
+ status varchar(10),
+created_by bigint,
+last_modified_by bigint,
+created_date date,
+created_at datetime(6),
+last_modified_at datetime(6),
+user_id bigint,
+level_id bigint,
+marks bigint,
+time_in_seconds bigint,
+CONSTRAINT FK_USER FOREIGN KEY (user_id) REFERENCES user (id),
+CONSTRAINT FK_LEVEL FOREIGN KEY (level_id) REFERENCES level (id),
+ primary key (id)) engine=InnoDB AUTO_INCREMENT=1;
