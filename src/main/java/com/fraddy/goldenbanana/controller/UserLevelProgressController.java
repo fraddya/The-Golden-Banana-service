@@ -1,12 +1,16 @@
 package com.fraddy.goldenbanana.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fraddy.goldenbanana.domain.UserLevelProgress;
 import com.fraddy.goldenbanana.domain.base.PagingListResponseWrapper;
 import com.fraddy.goldenbanana.domain.base.SingleItemResponseWrapper;
 import com.fraddy.goldenbanana.domain.criteria.UserLevelProgressCriteria;
 import com.fraddy.goldenbanana.dto.request.userLevelProgress.UserLevelProgressCreateRequest;
 import com.fraddy.goldenbanana.dto.request.userLevelProgress.UserLevelProgressSearchRequest;
+import com.fraddy.goldenbanana.dto.response.userLevelProgress.QuestionResponse;
 import com.fraddy.goldenbanana.dto.response.userLevelProgress.UserLevelProgressViewResponse;
 import com.fraddy.goldenbanana.mapper.UserLevelProgressMapper;
 import com.fraddy.goldenbanana.service.UserLevelProgressService;
@@ -18,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -111,13 +116,33 @@ public class UserLevelProgressController {
     }
 
     //ToDo : requesting queastion
-    /*@GetMapping("${app.endpoint.requestQuestion}")
-    public ResponseEntity<SingleItemResponseWrapper<QuestionResponse>> requestQuestion() {
-        //RestTemplate restTemplate = new RestTemplate();
-        //String url = "http://marcconrad.com/uob/banana/api.php?out=json";
+    @CrossOrigin(origins = "*")  // Allow all origins, or specify your domain instead of "*"
+    @GetMapping("${app.endpoint.requestQuestion}")
+    public ResponseEntity<SingleItemResponseWrapper<QuestionResponse>> requestQuestion() throws JsonProcessingException {
+        RestTemplate restTemplate = new RestTemplate();
+        // Updated URL to use HTTPS
+        String url = "https://marcconrad.com/uob/banana/api.php";
 
-        ResponseEntity<QuestionResponse> responseEntity = feignClientService.getQuestion();
-        QuestionResponse questionResponse = responseEntity.getBody();
+        // Fetch the API response
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+
+        // Parse the response body into the QuestionResponse object
+        QuestionResponse questionResponse = new QuestionResponse();
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            // Assuming response body is in JSON format
+            String jsonResponse = responseEntity.getBody();
+            if (jsonResponse != null) {
+                // Parse the JSON response (using your preferred library, e.g., Jackson)
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(jsonResponse);
+
+                // Set values in questionResponse
+                questionResponse.setQuestion(jsonNode.get("question").asText());
+                questionResponse.setSolution((long) jsonNode.get("solution").asInt());
+            }
+        }
+
+        // Wrap and return the response
         return new ResponseEntity<>(new SingleItemResponseWrapper<>(questionResponse), HttpStatus.OK);
-    }*/
+    }
 }
