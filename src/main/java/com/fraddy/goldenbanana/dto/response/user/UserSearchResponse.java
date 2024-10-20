@@ -20,6 +20,10 @@ public class UserSearchResponse {
     private String userLogging;
     private String passWord;
     private UserType role;
+
+    private String token;
+    private String refreshToken;
+
     private Status status;
 
 }

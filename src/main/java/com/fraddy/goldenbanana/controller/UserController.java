@@ -114,4 +114,10 @@ public class UserController {
         UserSearchResponse response = userMapper.mapToUserViewResponse(user);
         return new ResponseEntity<>(new SingleItemResponseWrapper<>(response), HttpStatus.OK);
     }
+
+    @GetMapping("${app.endpoint.userValidate}")
+    public String validateToken(@RequestParam("token") String token) {
+        userService.validateToken(token);
+        return "Token is valid";
+    }
 }

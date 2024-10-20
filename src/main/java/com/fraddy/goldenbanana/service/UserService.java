@@ -18,4 +18,7 @@ public interface UserService {
     User delete(Long id);
 
     User logIn(User user);
+
+    String generateToken(String email);
+    void validateToken(String token);
 }

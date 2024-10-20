@@ -20,4 +20,6 @@ public interface UserLevelProgressMapper {
     UserLevelProgressCriteria mapToCriteria(UserLevelProgressSearchRequest request);
 
     List<UserLevelProgressViewResponse> mapToSearchResponse(List<UserLevelProgress> content);
+
+    List<UserLevelProgressViewResponse> mapToLeaderBoardResponse(List<UserLevelProgress> userLevelProgresses);
 }

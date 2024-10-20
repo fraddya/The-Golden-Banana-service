@@ -8,6 +8,7 @@ import com.fraddy.goldenbanana.domain.criteria.UserCriteria;
 import com.fraddy.goldenbanana.enums.Status;
 import com.fraddy.goldenbanana.enums.UserType;
 import com.fraddy.goldenbanana.repository.UserRepository;
+import com.fraddy.goldenbanana.service.JwtService;
 import com.fraddy.goldenbanana.service.UserService;
 import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -36,6 +35,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Transactional
     @Override
@@ -133,11 +135,28 @@ public class UserServiceImpl implements UserService {
         if (userPersisted != null) {
             if (passwordEncoder.matches(user.getPassWord(), userPersisted.getPassWord())) {
                 userPersisted.setUserLogging(LocalDateTime.now());
+                String token = jwtService.generateToken(userPersisted.getEmail());
+                System.out.println("Token: " + token);
+                if (!token.matches("[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+")) {
+                    throw new RuntimeException("JWT token is not in the correct format");
+                }
+                jwtService.validateToken(token);
                 userRepository.save(userPersisted);
+                userPersisted.setToken(token);
                 return userPersisted;
             }
         }
         throw new ComplexValidationException(user.getEmail(), "User credentials Invalid");
+    }
+
+    @Override
+    public String generateToken(String email) {
+        return jwtService.generateToken(email);
+    }
+
+    @Override
+    public void validateToken(String token) {
+        jwtService.validateToken(token);
     }
 
 }

@@ -38,4 +38,9 @@ public class User extends CreateModifyAwareBaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<UserLevelProgress> progress;
+
+    @Transient
+    private String token;
+    @Transient
+    private String refreshToken;
 }
