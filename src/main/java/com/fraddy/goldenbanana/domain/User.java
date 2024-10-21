@@ -34,8 +34,14 @@ public class User extends CreateModifyAwareBaseEntity {
     private LocalDateTime userLogging;
     private String passWord;
     private UserType role;
+    private Boolean firstTimeLogin;
     private Status status;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<UserLevelProgress> progress;
+
+    @Transient
+    private String token;
+    @Transient
+    private String refreshToken;
 }

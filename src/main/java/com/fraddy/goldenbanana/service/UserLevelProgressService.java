@@ -5,6 +5,8 @@ import com.fraddy.goldenbanana.domain.UserLevelProgress;
 import com.fraddy.goldenbanana.domain.criteria.UserLevelProgressCriteria;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface UserLevelProgressService {
 
     UserLevelProgress save(UserLevelProgress userLevelProgress);
@@ -16,5 +18,7 @@ public interface UserLevelProgressService {
     UserLevelProgress update(UserLevelProgress userLevelProgress);
 
     UserLevelProgress delete(Long id);
+
+    List<UserLevelProgress> leaderBoard();
 
 }

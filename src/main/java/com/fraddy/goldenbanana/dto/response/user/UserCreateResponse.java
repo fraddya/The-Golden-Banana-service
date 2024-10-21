@@ -20,5 +20,10 @@ public class UserCreateResponse {
     private String userLogging;
     private String passWord;
     private UserType role;
+    private Boolean firstTimeLogin;
+
+    private String token;
+    private String refreshToken;
+
     private Status status;
 }

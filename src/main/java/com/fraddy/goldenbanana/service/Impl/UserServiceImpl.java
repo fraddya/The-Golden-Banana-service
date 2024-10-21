@@ -8,8 +8,11 @@ import com.fraddy.goldenbanana.domain.criteria.UserCriteria;
 import com.fraddy.goldenbanana.enums.Status;
 import com.fraddy.goldenbanana.enums.UserType;
 import com.fraddy.goldenbanana.repository.UserRepository;
+import com.fraddy.goldenbanana.service.EmailService;
+import com.fraddy.goldenbanana.service.JwtService;
 import com.fraddy.goldenbanana.service.UserService;
 import com.querydsl.core.BooleanBuilder;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -37,6 +38,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private EmailService emailService;
+
     @Transactional
     @Override
     public User save(User user) {
@@ -47,7 +54,20 @@ public class UserServiceImpl implements UserService {
         user.setStatus(Status.ACTIVE);
         user.setDateJoin(LocalDate.now());
         if (user.getRole() == null) user.setRole(UserType.USER);
-        user.setPassWord(passwordEncoder.encode(user.getPassWord()));
+        if (user.getPassWord() != null && !user.getPassWord().isEmpty()) {
+            user.setPassWord(passwordEncoder.encode(user.getPassWord()));
+        } else {
+            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder pass = new StringBuilder();
+            java.util.Random rand = new java.util.Random();
+            for (int i = 0; i < 12; i++) {
+                pass.append(chars.charAt(rand.nextInt(chars.length())));
+            }
+            user.setPassWord(pass.toString());
+            sendEmail(user);
+            user.setPassWord(passwordEncoder.encode(pass.toString()));
+        }
+        user.setFirstTimeLogin(true);
         return userRepository.save(user);
     }
 
@@ -109,6 +129,7 @@ public class UserServiceImpl implements UserService {
         if (user.getDateJoin() != null) userDb.setDateJoin(user.getDateJoin());
         if (user.getGenderType() != null) userDb.setGenderType(user.getGenderType());
         if (user.getImage() != null) userDb.setImage(user.getImage());
+        if (userDb.getFirstTimeLogin()) userDb.setFirstTimeLogin(false);
         if (user.getPassWord() != null) userDb.setPassWord(passwordEncoder.encode(user.getPassWord()));
         //if (user.getPassWord() != null) userDb.setPassWord((user.getPassWord()));
         if (user.getRole() != null) userDb.setRole(user.getRole());
@@ -133,11 +154,54 @@ public class UserServiceImpl implements UserService {
         if (userPersisted != null) {
             if (passwordEncoder.matches(user.getPassWord(), userPersisted.getPassWord())) {
                 userPersisted.setUserLogging(LocalDateTime.now());
+                String token = jwtService.generateToken(userPersisted.getEmail());
+                System.out.println("Token: " + token);
+                if (!token.matches("[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+")) {
+                    throw new RuntimeException("JWT token is not in the correct format");
+                }
+                jwtService.validateToken(token);
                 userRepository.save(userPersisted);
+                userPersisted.setToken(token);
                 return userPersisted;
             }
         }
         throw new ComplexValidationException(user.getEmail(), "User credentials Invalid");
     }
 
+    @Override
+    public String generateToken(String email) {
+        return jwtService.generateToken(email);
+    }
+
+    @Override
+    public void validateToken(String token) {
+        jwtService.validateToken(token);
+    }
+
+    private void sendEmail(User user) {
+        log.info("Welcome email start: {}");
+
+        // Create HTML content for the email
+        StringBuilder htmlContent = new StringBuilder();
+        htmlContent.append("<div style='font-family: Arial, sans-serif; background-color: #fff7e1; padding: 20px;'>"); // Banana yellow background
+        htmlContent.append("<h1 style='text-align: center; color: #b5651d;'>Welcome to The Golden Banana Game!</h1>"); // Brown colored heading
+        htmlContent.append("<p style='text-align: center;'>Dear ").append(user.getFirstName()).append(" ").append(user.getLastName()).append(",</p>");
+        htmlContent.append("<p style='text-align: center;'>We are warmly excited to have you with us!</p>");
+        htmlContent.append("<p style='text-align: center;'>Your username is: <strong>").append(user.getEmail()).append("</strong></p>");
+        htmlContent.append("<p style='text-align: center;'>Please use the following temporary password for your first login:</p>");
+        htmlContent.append("<p style='text-align: center; font-size: 18px; font-weight: bold;'>").append(user.getPassWord()).append("</p>");
+        htmlContent.append("<p style='text-align: center;'>After logging in, you can change your password in the user settings.</p>");
+        htmlContent.append("<p style='text-align: center;'>We hope you enjoy playing the game and being part of the community!</p>");
+        htmlContent.append("<p style='text-align: center;'>Best Regards,</p>");
+        htmlContent.append("<p style='text-align: center; font-weight: bold; color: #b5651d;'>The Golden Banana Team</p>"); // Brown colored closing
+        htmlContent.append("</div>");
+
+        try {
+            // Send the email using emailService
+            emailService.sendInvoiceEmail(user.getEmail(), "Welcome to The Golden Banana Game!", htmlContent.toString());
+            log.info("Welcome email sent successfully to: {}", user.getEmail());
+        } catch (MessagingException e) {
+            log.error("Failed to send welcome email to: {}, Error: {}", user.getEmail(), e.getMessage());
+        }
+    }
 }

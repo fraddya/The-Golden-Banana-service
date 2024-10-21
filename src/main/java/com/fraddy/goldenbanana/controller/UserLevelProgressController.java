@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fraddy.goldenbanana.domain.UserLevelProgress;
+import com.fraddy.goldenbanana.domain.base.ListResponseWrapper;
 import com.fraddy.goldenbanana.domain.base.PagingListResponseWrapper;
 import com.fraddy.goldenbanana.domain.base.SingleItemResponseWrapper;
 import com.fraddy.goldenbanana.domain.criteria.UserLevelProgressCriteria;
@@ -113,6 +114,13 @@ public class UserLevelProgressController {
             response = mapper.mapToViewResponse(userLevelProgress);
         }
         return new ResponseEntity<>(new SingleItemResponseWrapper<>(response), HttpStatus.OK);
+    }
+
+    @GetMapping("${app.endpoint.userLevelProgresLeaderBord}")
+    public ResponseEntity<ListResponseWrapper<UserLevelProgressViewResponse>> leaderBoard() {
+        List<UserLevelProgress> userLevelProgresses = userService.leaderBoard();
+        List<UserLevelProgressViewResponse> responses = mapper.mapToLeaderBoardResponse(userLevelProgresses);
+        return new ResponseEntity<>(new ListResponseWrapper<>(responses), HttpStatus.OK);
     }
 
     //ToDo : requesting queastion
