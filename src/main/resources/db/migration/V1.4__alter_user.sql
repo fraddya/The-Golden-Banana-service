@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD COLUMN `first_time_login` TINYINT(1);
